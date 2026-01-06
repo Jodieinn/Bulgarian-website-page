@@ -1,0 +1,1070 @@
+```html
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Банков Теглене | Българска Банка</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 25px 0;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 6px 20px rgba(30, 60, 114, 0.3);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "€";
+            position: absolute;
+            font-size: 280px;
+            opacity: 0.07;
+            right: 30px;
+            top: -60px;
+            font-weight: bold;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.8rem;
+            color: #f1c40f;
+        }
+        
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+        
+        .logo span {
+            color: #f1c40f;
+            font-weight: 300;
+            font-size: 1.2rem;
+        }
+        
+        .total-balance {
+            text-align: right;
+        }
+        
+        .balance-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #f1c40f;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .total-balance {
+                text-align: center;
+            }
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h2 {
+            color: #1e3c72;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #f1c40f;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .card h2 i {
+            color: #2a5298;
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1e3c72;
+            font-size: 1rem;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e1e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: #f8fafc;
+        }
+        
+        input:focus, select:focus {
+            border-color: #f1c40f;
+            outline: none;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.1);
+        }
+        
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        
+        .fee-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .fee-popup-content {
+            background-color: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: popupAnimation 0.5s ease-out;
+            border-top: 8px solid #e74c3c;
+        }
+        
+        @keyframes popupAnimation {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .fee-icon {
+            font-size: 4rem;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        
+        .fee-popup h3 {
+            color: #1e3c72;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .fee-amount {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #e74c3c;
+            margin: 20px 0;
+        }
+        
+        .popup-note {
+            background-color: #fff8e1;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .popup-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            padding: 16px 30px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            flex: 1;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #f1c40f, #e0b40c);
+            color: #1e3c72;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, #e0b40c, #c9a30b);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px rgba(241, 196, 15, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #64748b;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+            transform: translateY(-2px);
+        }
+        
+        .withdraw-btn {
+            background: linear-gradient(to right, #2a5298, #1e3c72);
+            color: white;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.2rem;
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .withdraw-btn:hover {
+            background: linear-gradient(to right, #264a8a, #1a3566);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(42, 82, 152, 0.3);
+        }
+        
+        .transaction-details {
+            background-color: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            color: #1e3c72;
+            font-weight: 600;
+        }
+        
+        .highlight {
+            color: #27ae60;
+            font-weight: 700;
+        }
+        
+        .warning-note {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border-left: 5px solid #ffc107;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        
+        .warning-note i {
+            color: #ff9800;
+            font-size: 1.5rem;
+            margin-top: 3px;
+        }
+        
+        .security-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .security-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background-color: #f1f8ff;
+            border-radius: 8px;
+        }
+        
+        .security-item i {
+            color: #2a5298;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 50px;
+            font-size: 0.9rem;
+        }
+        
+        .success-transactions {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .transactions-title {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+        
+        .transaction-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .user-info h4 {
+            color: #1e3c72;
+            margin-bottom: 3px;
+        }
+        
+        .user-info p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .transaction-amount {
+            font-weight: 700;
+            color: #27ae60;
+            font-size: 1.2rem;
+        }
+        
+        .transaction-date {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .pending-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background-color: #fff8e1;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #f1c40f;
+        }
+        
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f1c40f;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .pending-text {
+            color: #d35400;
+            font-weight: 600;
+        }
+        
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .success-message i {
+            font-size: 5rem;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+        
+        .success-message h3 {
+            color: #1e3c72;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .bulgarian-flag {
+            display: inline-block;
+            width: 20px;
+            height: 15px;
+            background: linear-gradient(to bottom, white 33%, green 33%, green 66%, red 66%);
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+        
+        .validation-error {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .form-group.error input, .form-group.error select {
+            border-color: #e74c3c;
+        }
+        
+        .form-group.error .validation-error {
+            display: block;
+        }
+        
+        .eu-bank-logos {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .eu-bank-logo {
+            background-color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            font-weight: 700;
+            color: #1e3c72;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .eu-bank-logo i {
+            color: #f1c40f;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <div>
+                        <h1>Българска Банка <span class="bulgarian-flag"></span></h1>
+                        <p>Сигурни банкови услуги</p>
+                    </div>
+                </div>
+                
+                <div class="total-balance">
+                    <div class="balance-label">НАЛИЧЕН БАЛАНС</div>
+                    <div class="balance-amount">€60,000.00</div>
+                    <div class="balance-label">EUR • Български лев (BGN)</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="main-content">
+            <div class="card">
+                <h2><i class="fas fa-money-check-alt"></i> Заявка за Теглене</h2>
+                
+                <form id="withdrawalForm">
+                    <div class="form-group">
+                        <label for="fullName" class="required">Име на собственика на сметката</label>
+                        <input type="text" id="fullName" placeholder="Въведете пълното си име">
+                        <div class="validation-error">Моля, въведете вашето име</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="accountNumber" class="required">IBAN / Номер на сметка</label>
+                        <input type="text" id="accountNumber" placeholder="BG80 BNBG 9661 1020 3456 78">
+                        <div class="validation-error">Моля, въведете валиден номер на сметка</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bankName" class="required">Име на банката</label>
+                        <select id="bankName">
+                            <option value="">Изберете вашата банка</option>
+                            <option value="БНБ">Българска народна банка (БНБ)</option>
+                            <option value="Уникредит Булбанк">Уникредит Булбанк</option>
+                            <option value="ДСК">ДСК Банк</option>
+                            <option value="ПИБ">Първа инвестиционна банка</option>
+                            <option value="ОББ">Обединена българска банка</option>
+                            <option value="Райфайзенбанк">Райфайзенбанк</option>
+                            <option value="Пощенска банка">Пощенска банка</option>
+                            <option value="Други">Друга банка</option>
+                        </select>
+                        <div class="validation-error">Моля, изберете вашата банка</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bankBranch" class="required">Клон на банката / Град</label>
+                        <input type="text" id="bankBranch" placeholder="София, Пловдив, Варна и др.">
+                        <div class="validation-error">Моля, въведете клон на банката</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="withdrawAmount" class="required">Сума за теглене (EUR)</label>
+                        <input type="number" id="withdrawAmount" placeholder="Въведете сума за теглене" min="100" max="60000" value="60000">
+                        <div class="validation-error">Моля, въведете сума между €100 и €60,000</div>
+                    </div>
+                    
+                    <div class="warning-note">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>Важно:</strong> Изисква се такса за обработка на теглене от €300. Тази такса трябва да бъде платена преди тегленето ви да бъде обработено. Таксата ще бъде приспадната от сумата за теглене.
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="withdraw-btn" id="withdrawBtn">
+                        <i class="fas fa-euro-sign"></i> ЗАЯВЕТЕ ТЕГЛЕНЕ
+                    </button>
+                </form>
+                
+                <div class="pending-status" id="pendingStatus" style="display: none;">
+                    <div class="spinner"></div>
+                    <div class="pending-text">Обработка на плащането... Моля, изчакайте</div>
+                </div>
+                
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Тегленето е инициирано!</h3>
+                    <p>Вашата заявка за теглене на <span class="highlight" id="finalAmount">€60,000</span> е получена.</p>
+                    <p>Таксата за обработка от €300 е платена и транзакцията ви се обработва.</p>
+                    <p>Средствата ще бъдат преведени по вашата сметка в рамките на 1-2 работни дни.</p>
+                    <div class="popup-buttons" style="margin-top: 30px;">
+                        <button class="btn btn-primary" id="newRequestBtn">Нова заявка за теглене</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2><i class="fas fa-file-invoice-euro"></i> Детайли на транзакцията</h2>
+                
+                <div class="transaction-details">
+                    <div class="detail-row">
+                        <div class="detail-label">Общ наличен баланс</div>
+                        <div class="detail-value highlight">€60,000.00</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Сума за теглене</div>
+                        <div class="detail-value">€<span id="displayWithdrawAmount">60,000.00</span></div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Такса за обработка</div>
+                        <div class="detail-value">€300.00</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Статус на таксата</div>
+                        <div class="detail-value" style="color:#e74c3c; font-weight:700;">Изчаква плащане</div>
+                    </div>
+                    
+                    <div class="detail-row" style="border-top: 2px solid #1e3c72; padding-top: 15px; margin-top: 10px;">
+                        <div class="detail-label">Сума за получаване</div>
+                        <div class="detail-value highlight">€<span id="netAmount">59,700.00</span></div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Оставащ баланс</div>
+                        <div class="detail-value">€<span id="remainingBalance">0.00</span></div>
+                    </div>
+                </div>
+                
+                <div class="success-transactions">
+                    <h3 class="transactions-title"><i class="fas fa-users"></i> Последни успешни тегления</h3>
+                    
+                    <div class="transaction-item">
+                        <div class="transaction-user">
+                            <div class="user-avatar">ИП</div>
+                            <div class="user-info">
+                                <h4>Иван Петров</h4>
+                                <p>Уникредит Булбанк • София</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="transaction-amount">€12,500.00</div>
+                            <div class="transaction-date">12 Март 2024, 14:30</div>
+                        </div>
+                    </div>
+                    
+                    <div class="transaction-item">
+                        <div class="transaction-user">
+                            <div class="user-avatar">МГ</div>
+                            <div class="user-info">
+                                <h4>Мария Георгиева</h4>
+                                <p>ДСК Банк • Пловдив</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="transaction-amount">€8,750.00</div>
+                            <div class="transaction-date">11 Март 2024, 10:15</div>
+                        </div>
+                    </div>
+                    
+                    <div class="transaction-item">
+                        <div class="transaction-user">
+                            <div class="user-avatar">ГС</div>
+                            <div class="user-info">
+                                <h4>Георги Стоянов</h4>
+                                <p>Райфайзенбанк • Варна</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="transaction-amount">€15,200.00</div>
+                            <div class="transaction-date">10 Март 2024, 16:45</div>
+                        </div>
+                    </div>
+                    
+                    <div class="transaction-item">
+                        <div class="transaction-user">
+                            <div class="user-avatar">АД</div>
+                            <div class="user-info">
+                                <h4>Александра Димитрова</h4>
+                                <p>Първа инвестиционна банка • Бургас</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="transaction-amount">€6,300.00</div>
+                            <div class="transaction-date">9 Март 2024, 11:20</div>
+                        </div>
+                    </div>
+                    
+                    <div class="transaction-item">
+                        <div class="transaction-user">
+                            <div class="user-avatar">ДИ</div>
+                            <div class="user-info">
+                                <h4>Димитър Иванов</h4>
+                                <p>Обединена българска банка • София</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="transaction-amount">€9,800.00</div>
+                            <div class="transaction-date">8 Март 2024, 09:45</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <h3><i class="fas fa-shield-alt"></i> Сигурност</h3>
+                    <div class="security-features">
+                        <div class="security-item">
+                            <i class="fas fa-lock"></i>
+                            <span>256-битово криптиране</span>
+                        </div>
+                        <div class="security-item">
+                            <i class="fas fa-check-double"></i>
+                            <span>Двустепенна автентикация</span>
+                        </div>
+                        <div class="security-item">
+                            <i class="fas fa-user-shield"></i>
+                            <span>PCI DSS съобразеност</span>
+                        </div>
+                        <div class="security-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Защитени транзакции</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="eu-bank-logos">
+            <div class="eu-bank-logo">
+                <i class="fas fa-landmark"></i>
+                <span>БНБ</span>
+            </div>
+            <div class="eu-bank-logo">
+                <i class="fas fa-landmark"></i>
+                <span>Уникредит Булбанк</span>
+            </div>
+            <div class="eu-bank-logo">
+                <i class="fas fa-landmark"></i>
+                <span>ДСК Банк</span>
+            </div>
+            <div class="eu-bank-logo">
+                <i class="fas fa-landmark"></i>
+                <span>Първа инвестиционна банка</span>
+            </div>
+            <div class="eu-bank-logo">
+                <i class="fas fa-landmark"></i>
+                <span>Райфайзенбанк</span>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Българска Банка АД • Регистрирана в София, България • BIC: BNBGBGSF</p>
+            <p>Това е демонстрационен уебсайт само за образователни цели. Не се обработват реални транзакции.</p>
+            <p><i class="fas fa-lock"></i> Сигурна връзка • <i class="fas fa-gavel"></i> Съобразено с GDPR • <i class="fas fa-flag"></i> Регулирана от БНБ</p>
+        </footer>
+    </div>
+    
+    <!-- €300 Такса Popup -->
+    <div class="fee-popup" id="feePopup">
+        <div class="fee-popup-content">
+            <div class="fee-icon">
+                <i class="fas fa-euro-sign"></i>
+            </div>
+            
+            <h3>Изисква се такса за обработка на теглене</h3>
+            
+            <p>За да завършите тегленето на <span class="highlight" id="popupWithdrawAmount">€60,000</span>, трябва да платите такса за обработка.</p>
+            
+            <div class="fee-amount">€300</div>
+            
+            <div class="popup-note">
+                <i class="fas fa-info-circle"></i>
+                Тази такса е задължителна за всички международни тегления и покрива обработката на транзакциите, сигурния трансфер и проверката за съобразност.
+            </div>
+            
+            <p>След плащането на тази такса, <span class="highlight" id="popupNetAmount">€59,700</span> ще бъдат преведени по вашата сметка.</p>
+            
+            <div class="popup-buttons">
+                <button class="btn btn-secondary" id="cancelBtn">Отказ</button>
+                <button class="btn btn-primary" id="payFeeBtn">Платете €300 & Завършете тегленето</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const form = document.getElementById('withdrawalForm');
+            const feePopup = document.getElementById('feePopup');
+            const withdrawBtn = document.getElementById('withdrawBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const payFeeBtn = document.getElementById('payFeeBtn');
+            const successMessage = document.getElementById('successMessage');
+            const newRequestBtn = document.getElementById('newRequestBtn');
+            const withdrawAmountInput = document.getElementById('withdrawAmount');
+            const pendingStatus = document.getElementById('pendingStatus');
+            
+            // Display elements
+            const displayWithdrawAmount = document.getElementById('displayWithdrawAmount');
+            const netAmount = document.getElementById('netAmount');
+            const remainingBalance = document.getElementById('remainingBalance');
+            const popupWithdrawAmount = document.getElementById('popupWithdrawAmount');
+            const popupNetAmount = document.getElementById('popupNetAmount');
+            const finalAmount = document.getElementById('finalAmount');
+            
+            // Constants
+            const FEE_AMOUNT = 300;
+            const TOTAL_BALANCE = 60000;
+            
+            // Update transaction summary when amount changes
+            withdrawAmountInput.addEventListener('input', updateTransactionSummary);
+            
+            // Initialize transaction summary
+            updateTransactionSummary();
+            
+            // Form validation
+            function validateForm() {
+                let isValid = true;
+                
+                // Validate full name
+                const fullName = document.getElementById('fullName');
+                if (!fullName.value.trim()) {
+                    showError(fullName, 'Моля, въведете вашето име');
+                    isValid = false;
+                } else {
+                    clearError(fullName);
+                }
+                
+                // Validate account number
+                const accountNumber = document.getElementById('accountNumber');
+                if (!accountNumber.value.trim()) {
+                    showError(accountNumber, 'Моля, въведете вашия номер на сметка');
+                    isValid = false;
+                } else {
+                    clearError(accountNumber);
+                }
+                
+                // Validate bank name
+                const bankName = document.getElementById('bankName');
+                if (!bankName.value) {
+                    showError(bankName, 'Моля, изберете вашата банка');
+                    isValid = false;
+                } else {
+                    clearError(bankName);
+                }
+                
+                // Validate bank branch
+                const bankBranch = document.getElementById('bankBranch');
+                if (!bankBranch.value.trim()) {
+                    showError(bankBranch, 'Моля, въведете клон на вашата банка');
+                    isValid = false;
+                } else {
+                    clearError(bankBranch);
+                }
+                
+                // Validate withdrawal amount
+                const withdrawAmount = parseFloat(withdrawAmountInput.value);
+                if (!withdrawAmount || withdrawAmount < 100 || withdrawAmount > TOTAL_BALANCE) {
+                    showError(withdrawAmountInput, `Моля, въведете сума между €100 и €${TOTAL_BALANCE.toLocaleString()}`);
+                    isValid = false;
+                } else {
+                    clearError(withdrawAmountInput);
+                }
+                
+                return isValid;
+            }
+            
+            function showError(inputElement, message) {
+                const formGroup = inputElement.parentElement;
+                formGroup.classList.add('error');
+                const errorElement = formGroup.querySelector('.validation-error');
+                errorElement.textContent = message;
+            }
+            
+            function clearError(inputElement) {
+                const formGroup = inputElement.parentElement;
+                formGroup.classList.remove('error');
+            }
+            
+            // Update transaction summary
+            function updateTransactionSummary() {
+                const withdrawAmount = parseFloat(withdrawAmountInput.value) || TOTAL_BALANCE;
+                const netWithdrawAmount = withdrawAmount - FEE_AMOUNT;
+                const remaining = TOTAL_BALANCE - withdrawAmount;
+                
+                // Update display
+                displayWithdrawAmount.textContent = withdrawAmount.toLocaleString('bg-BG', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                
+                netAmount.textContent = netWithdrawAmount.toLocaleString('bg-BG', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                
+                remainingBalance.textContent = remaining.toLocaleString('bg-BG', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                
+                // Update popup values
+                popupWithdrawAmount.textContent = `€${withdrawAmount.toLocaleString('bg-BG', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })}`;
+                
+                popupNetAmount.textContent = `€${netWithdrawAmount.toLocaleString('bg-BG', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })}`;
+            }
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (validateForm()) {
+                    // Show the €300 fee popup
+                    feePopup.style.display = 'flex';
+                }
+            });
+            
+            // Cancel button in popup
+            cancelBtn.addEventListener('click', function() {
+                feePopup.style.display = 'none';
+            });
+            
+            // Pay fee button in popup
+            payFeeBtn.addEventListener('click', function() {
+                const withdrawAmount = parseFloat(withdrawAmountInput.value) || TOTAL_BALANCE;
+                
+                // Hide popup and show pending status
+                feePopup.style.display = 'none';
+                form.style.display = 'none';
+                pendingStatus.style.display = 'flex';
+                
+                // Simulate payment processing with spinner
+                setTimeout(function() {
+                    // Hide pending status
+                    pendingStatus.style.display = 'none';
+                    
+                    // Update final amount in success message
+                    const netWithdrawAmount = withdrawAmount - FEE_AMOUNT;
+                    finalAmount.textContent = `€${netWithdrawAmount.toLocaleString('bg-BG', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })}`;
+                    
+                    // Show success message
+                    successMessage.style.display = 'block';
+                    
+                    // Log transaction (for demo purposes only)
+                    console.log('=== УСПЕШНА ТРАНЗАКЦИЯ ===');
+                    console.log('Име:', document.getElementById('fullName').value);
+                    console.log('Номер на сметка:', document.getElementById('accountNumber').value);
+                    console.log('Банка:', document.getElementById('bankName').value);
+                    console.log('Клон:', document.getElementById('bankBranch').value);
+                    console.log('Сума за теглене: €', withdrawAmount);
+                    console.log('Платена такса: €300');
+                    console.log('Нетна сума: €', netWithdrawAmount);
+                    console.log('Дата:', new Date().toLocaleString('bg-BG'));
+                    console.log('=========================');
+                    
+                    // Add to recent transactions (simulated)
+                    addToRecentTransactions(
+                        document.getElementById('fullName').value,
+                        document.getElementById('bankName').value,
+                        document.getElementById('bankBranch').value,
+                        netWithdrawAmount
+                    );
+                }, 3000);
+            });
+            
+            // New request button
+            newRequestBtn.addEventListener('click', function() {
+                // Reset form and show it again
+                form.reset();
+                form.style.display = 'block';
+                successMessage.style.display = 'none';
+                pendingStatus.style.display = 'none';
+                
+                // Reset fee popup button
+                payFeeBtn.innerHTML = 'Платете €300 & Завършете тегленето';
+                payFeeBtn.disabled = false;
+                
+                // Clear any errors
+                const formGroups = document.querySelectorAll('.form-group');
+                formGroups.forEach(group => {
+                    group.classList.remove('error');
+                });
+                
+                // Reset amount to total balance
+                withdrawAmountInput.value = TOTAL_BALANCE;
+                updateTransactionSummary();
+            });
+            
+            // Close popup if clicking outside
+            feePopup.addEventListener('click', function(e) {
+                if (e.target === feePopup) {
+                    feePopup.style.display = 'none';
+                }
+            });
+            
+            // Function to add transaction to recent list (simulated)
+            function addToRecentTransactions(name, bank, branch, amount) {
+                // This is a simulation - in a real app this would go to a database
+                console.log(`Нова транзакция добавена: ${name} тегли €${amount} от ${bank}, ${branch}`);
+                
+                // Update the status message to show new transaction
+                const statusMsg = document.querySelector('.pending-text');
+                if (statusMsg) {
+                    statusMsg.innerHTML = `Транзакцията за ${name} е успешна! Сума: €${amount.toLocaleString('bg-BG')}`;
+                }
+            }
+            
+            // Bulgarian date formatting
+            function formatBulgarianDate(date) {
+                const options = { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
+                return date.toLocaleDateString('bg-BG', options);
+            }
+        });
+    </script>
+</body>
+</html>
+```
